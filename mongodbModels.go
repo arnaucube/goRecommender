@@ -9,6 +9,7 @@ type ItemModel struct {
 	ID           string
 	TRecommended int
 	TActed       int
+	TScored      int //times acted from recommendation
 }
 
 var scores []float64

@@ -110,6 +110,33 @@ func getUserById(id string) (UserModel, error) {
 		return result, err
 	}
 }
+func getItemById(id string) (ItemModel, error) {
+	result := ItemModel{}
+	err := itemCollection.Find(bson.M{"id": id}).One(&result)
+	if err != nil {
+		//user not exist
+		return result, err
+	} else {
+		//user exist
+		return result, err
+	}
+}
+func updateItem(item ItemModel) (ItemModel, error) {
+	err := itemCollection.Update(bson.M{"id": item.ID}, item)
+	if err != nil {
+		//log.Fatal(err)
+		return item, err
+	}
+	return item, err
+}
+func updateUser(user UserModel) (UserModel, error) {
+	err := userCollection.Update(bson.M{"id": user.ID}, user)
+	if err != nil {
+		return user, err
+	}
+	return user, err
+}
+
 func getAllItems() ([]ItemModel, error) {
 	result := []ItemModel{}
 	iter := itemCollection.Find(nil).Limit(100).Iter()

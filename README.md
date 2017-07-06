@@ -36,3 +36,12 @@ GET /r/{userid}/{nrec}
 {userid}: is the userid
 {nrec}: number of recommendations requested
 ```
+
+ - Select Item
+
+```
+POST /selectItem
+{
+    userid: "user1",
+    itemid: "item1"
+}
