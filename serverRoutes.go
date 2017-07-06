@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -52,11 +53,11 @@ func NewUser(w http.ResponseWriter, r *http.Request) {
 func Recommendations(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userid := vars["userid"]
-	nrec := vars["nrec"]
-	fmt.Println(userid)
-	fmt.Println(nrec)
+	nrec, err := strconv.Atoi(vars["nrec"])
+	check(err)
 
 	//now, get recommendations
+	getRecommendations(userid, nrec)
 
 	fmt.Fprintln(w, "recommendations")
 }

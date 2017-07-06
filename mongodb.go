@@ -98,3 +98,27 @@ func saveUser(c *mgo.Collection, user UserModel) {
 	}
 
 }
+
+func getUserById(id string) (UserModel, error) {
+	result := UserModel{}
+	err := userCollection.Find(bson.M{"id": id}).One(&result)
+	if err != nil {
+		//user not exist
+		return result, err
+	} else {
+		//user exist
+		return result, err
+	}
+}
+func getAllItems() ([]ItemModel, error) {
+	result := []ItemModel{}
+	iter := itemCollection.Find(nil).Limit(100).Iter()
+	err := iter.All(&result)
+	if err != nil {
+		//user not exist
+		return result, err
+	} else {
+		//user exist
+		return result, err
+	}
+}
