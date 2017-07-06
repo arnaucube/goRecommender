@@ -1,8 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 type Routes []Route
@@ -15,18 +18,45 @@ var routes = Routes{
 		Index,
 	},
 	Route{
-		"NewImage",
+		"Recommendations",
+		"GET",
+		"/r/{userid}/{nrec}",
+		Recommendations,
+	},
+	Route{
+		"NewUser",
 		"POST",
-		"/image",
-		NewImage,
+		"/user",
+		NewUser,
 	},
 }
 
 //ROUTES
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "send images to the /image path")
+	fmt.Fprintln(w, "ask for recommendations in /r")
 }
-func NewImage(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "response")
+
+func NewUser(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var newUser UserModel
+	err := decoder.Decode(&newUser)
+	check(err)
+	defer r.Body.Close()
+
+	saveUser(userCollection, newUser)
+
+	fmt.Println(newUser)
+	fmt.Fprintln(w, "new user added: ", newUser.ID)
+}
+func Recommendations(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userid := vars["userid"]
+	nrec := vars["nrec"]
+	fmt.Println(userid)
+	fmt.Println(nrec)
+
+	//now, get recommendations
+
+	fmt.Fprintln(w, "recommendations")
 }

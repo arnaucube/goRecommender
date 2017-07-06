@@ -7,13 +7,13 @@ import (
 	"log"
 
 	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 //MongoConfig stores the configuration of mongodb to connect
 type MongoConfig struct {
-	Ip         string `json:"ip"`
-	Database   string `json:"database"`
-	Collection string `json:"collection"`
+	Ip       string `json:"ip"`
+	Database string `json:"database"`
 }
 
 var mongoConfig MongoConfig
@@ -42,17 +42,9 @@ func getSession() (*mgo.Session, error) {
 
 	return session, err
 }
-func getCollection(session *mgo.Session) *mgo.Collection {
+func getCollection(session *mgo.Session, collection string) *mgo.Collection {
 
-	c := session.DB(mongoConfig.Database).C(mongoConfig.Collection)
-	return c
-}
-func connectMongodb() *mgo.Collection {
-	session, err := getSession()
-	if err != nil {
-		log.Fatal(err)
-	}
-	c := getCollection(session)
+	c := session.DB(mongoConfig.Database).C(collection)
 	return c
 }
 
@@ -67,6 +59,42 @@ func saveDataEntryToMongo(c *mgo.Collection, user UserModel) {
 	err := c.Insert(user)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+}
+
+func saveItem(c *mgo.Collection, item ItemModel) {
+	//first, check if the item already exists
+	result := ItemModel{}
+	err := c.Find(bson.M{"id": item.ID}).One(&result)
+	if err != nil {
+		//item not found, so let's add a new entry
+		err = c.Insert(item)
+		check(err)
+	} else {
+		/*result.Data = append(result.Data, dataEntry)
+		err = c.Update(bson.M{"id": dataEntry.ContratoCOD}, result)
+		if err != nil {
+			log.Fatal(err)
+		}*/
+	}
+
+}
+
+func saveUser(c *mgo.Collection, user UserModel) {
+	//first, check if the item already exists
+	result := UserModel{}
+	err := c.Find(bson.M{"id": user.ID}).One(&result)
+	if err != nil {
+		//item not found, so let's add a new entry
+		err = c.Insert(user)
+		check(err)
+	} else {
+		/*result.Data = append(result.Data, dataEntry)
+		err = c.Update(bson.M{"id": dataEntry.ContratoCOD}, result)
+		if err != nil {
+			log.Fatal(err)
+		}*/
 	}
 
 }
