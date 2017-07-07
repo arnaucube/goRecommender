@@ -6,18 +6,16 @@ import (
 	"github.com/fatih/color"
 )
 
-func getRecommendations(userid string, nrec int) {
-
-	fmt.Println(userid)
-	fmt.Println(nrec)
-
+func getRecommendations(userid string, nrec int) []ItemModel {
 	user, err := getUserById(userid)
 	check(err)
-	color.Blue("user: ")
-	fmt.Println(user)
 
-	items, err := getAllItems()
+	items, err := getItemsNotActed(user.Actions)
 	check(err)
-	color.Blue("all items: ")
+
+	//select nrec items from the items array
+
+	color.Blue("recommended items: ")
 	fmt.Println(items)
+	return items
 }

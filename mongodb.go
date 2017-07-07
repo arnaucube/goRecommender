@@ -141,11 +141,12 @@ func getAllItems() ([]ItemModel, error) {
 	result := []ItemModel{}
 	iter := itemCollection.Find(nil).Limit(100).Iter()
 	err := iter.All(&result)
-	if err != nil {
-		//user not exist
-		return result, err
-	} else {
-		//user exist
-		return result, err
-	}
+	return result, err
+}
+
+func getItemsNotActed(actedItems []string) ([]ItemModel, error) {
+	result := []ItemModel{}
+	iter := itemCollection.Find(bson.M{"id": bson.M{"$nin": actedItems}}).Limit(100).Iter()
+	err := iter.All(&result)
+	return result, err
 }

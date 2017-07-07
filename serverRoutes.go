@@ -65,9 +65,12 @@ func Recommendations(w http.ResponseWriter, r *http.Request) {
 	check(err)
 
 	//now, get recommendations
-	getRecommendations(userid, nrec)
+	items := getRecommendations(userid, nrec)
+	//convert []items struct to json
+	jItems, err := json.Marshal(items)
+	check(err)
 
-	fmt.Fprintln(w, "recommendations")
+	fmt.Fprintln(w, string(jItems))
 }
 func SelectItem(w http.ResponseWriter, r *http.Request) {
 	ipFilter(w, r)
@@ -80,6 +83,12 @@ func SelectItem(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "item "+itemid+" not found")
 	}
 
+	//find user
+	user, err := getUserById(userid)
+	if err != nil {
+		fmt.Fprintln(w, "user "+userid+" not found")
+	}
+
 	//increase TActed in item
 	item.TActed = item.TActed + 1
 
@@ -87,12 +96,6 @@ func SelectItem(w http.ResponseWriter, r *http.Request) {
 	item, err = updateItem(item)
 	check(err)
 	fmt.Println(item)
-
-	//find user
-	user, err := getUserById(userid)
-	if err != nil {
-		fmt.Fprintln(w, "user "+userid+" not found")
-	}
 
 	//add item to []Actions of user
 	user.Actions = append(user.Actions, itemid)
