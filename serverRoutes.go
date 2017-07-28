@@ -51,11 +51,14 @@ func NewUser(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&newUser)
 	check(err)
 	defer r.Body.Close()
+	newUser = user.clusterAge(newUser)
 
 	saveUser(userCollection, newUser)
 
 	fmt.Println(newUser)
-	fmt.Fprintln(w, "new user added: ", newUser.ID)
+	jNewUser, err := json.Marshal(newUser)
+	check(err)
+	fmt.Fprintln(w, string(jNewUser))
 }
 func Recommendations(w http.ResponseWriter, r *http.Request) {
 	ipFilter(w, r)
